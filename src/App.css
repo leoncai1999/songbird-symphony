@@ -100,6 +100,8 @@
 .volume-icon {
   width: 29px;
   height: 29px;
+  color: #0A724B;
+  flex-shrink: 0;
 }
 
 .playing-text {

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { IoVolumeMediumOutline } from 'react-icons/io5';
 import './App.css';
 import headerBird from './assets/header-bird.png';
 import blueStar from './assets/blue-star.png';
 import pinkStar from './assets/pink-star.png';
-import volumeIcon from './assets/volume-icon.png';
 import robinBird from './assets/robin-bird.jpg';
 import cardinalBird from './assets/cardinal-bird.jpg';
 import redWingedBlackbirdBird from './assets/red-winged-blackbird-bird.jpg';
@@ -145,7 +145,7 @@ function App() {
 
       <div className="playing-row">
         <div className="playing-indicator">
-          <img src={volumeIcon} alt="volume icon" className="volume-icon" />
+          <IoVolumeMediumOutline className="volume-icon" aria-label="volume icon" />
           <p className="playing-text">
             Playing {playingCount} Bird{playingCount === 1 ? '' : 's'}
           </p>
