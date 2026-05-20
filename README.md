@@ -6,4 +6,4 @@ Songbird Symphony is a web experience that allows you to create your own chorus 
 
 ## Technical Details
 
-This web app was built with React and deployed on Netlify. The domain name was acquired from Namecheap.
+The project design can be viewed on Figma [here](https://www.figma.com/design/i2BYcrQQY1ltc3INxzX2pa/Songbird-Symphony?node-id=0-1&t=5YFKWGLkmEZFvPiN-1). This web app was built with React and deployed on Netlify. The domain name was acquired from Namecheap.
