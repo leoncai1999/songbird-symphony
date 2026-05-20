@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import headerBird from './assets/header-bird.png';
-import orangeStar from './assets/orange-star.png';
 import blueStar from './assets/blue-star.png';
 import pinkStar from './assets/pink-star.png';
 import volumeIcon from './assets/volume-icon.png';
@@ -98,6 +97,13 @@ function App() {
       audioRefs.current[bird.id] = audio;
     }
 
+    if (playingIds.has(bird.id)) {
+      audio.pause();
+      audio.currentTime = 0;
+      handleBirdEnded(bird.id);
+      return;
+    }
+
     audio.currentTime = 0;
 
     const startPlaying = () => {
@@ -132,13 +138,12 @@ function App() {
         <img src={headerBird} alt="header bird" className="header-bird" />
       </div>
       <div className="subtitle-row">
-        <img src={orangeStar} alt="orange star" className="star" />
+        <img src={pinkStar} alt="pink star" className="star" />
         <p className="description">Create your own songbird symphony</p>
         <img src={blueStar} alt="blue star" className="star" />
       </div>
 
       <div className="playing-row">
-        <img src={pinkStar} alt="pink star" className="star" />
         <div className="playing-indicator">
           <img src={volumeIcon} alt="volume icon" className="volume-icon" />
           <p className="playing-text">
@@ -150,7 +155,6 @@ function App() {
             </button>
           )}
         </div>
-        <div className="star-spacer" aria-hidden="true" />
       </div>
 
       <div className="bird-container">
