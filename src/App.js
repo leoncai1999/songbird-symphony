@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import headerBird from './assets/header-bird.png';
 import orangeStar from './assets/orange-star.png';
@@ -10,8 +11,117 @@ import redWingedBlackbirdBird from './assets/red-winged-blackbird-bird.jpg';
 import songSparrowBird from './assets/song-sparrow-bird.jpg';
 import mourningDoveBird from './assets/mourning-dove-bird.jpg';
 import chickadeeBird from './assets/chickadee-bird.jpg';
+import robinSound from './assets/robin-sound.mp3';
+import cardinalSound from './assets/cardinal-sound.mp3';
+import redWingedBlackbirdSound from './assets/red-winged-blackbird-sound.mp3';
+import songSparrowSound from './assets/song-sparrow-sound.mp3'
+import mourningDoveSound from './assets/mourning-dove-sound.mp3';
+import chickadeeSound from './assets/chickadee-sound.mp3';
+
+const BIRDS = [
+  {
+    id: 'robin',
+    image: robinBird,
+    sound: robinSound,
+    name: 'Robin',
+    description: 'Soft Chirping',
+  },
+  {
+    id: 'cardinal',
+    image: cardinalBird,
+    sound: cardinalSound,
+    name: 'Cardinal',
+    description: 'Clear Whistling',
+  },
+  {
+    id: 'red-winged-blackbird',
+    image: redWingedBlackbirdBird,
+    sound: redWingedBlackbirdSound,
+    name: 'Red Winged Blackbird',
+    description: 'Musical Conk-La-Ree',
+  },
+  {
+    id: 'song-sparrow',
+    image: songSparrowBird,
+    sound: songSparrowSound,
+    name: 'Song Sparrow',
+    description: 'Melodic Trill',
+  },
+  {
+    id: 'mourning-dove',
+    image: mourningDoveBird,
+    sound: mourningDoveSound,
+    name: 'Mourning Dove',
+    description: 'Soft Cooing',
+  },
+  {
+    id: 'chickadee',
+    image: chickadeeBird,
+    sound: chickadeeSound,
+    name: 'Chickadee',
+    description: 'Chick-a-dee-dee-dee',
+  },
+];
 
 function App() {
+  const audioRefs = useRef({});
+  const [playingIds, setPlayingIds] = useState(() => new Set());
+
+  const playingCount = playingIds.size;
+
+  useEffect(() => {
+    const refs = audioRefs.current;
+    return () => {
+      Object.values(refs).forEach((audio) => {
+        audio.pause();
+      });
+    };
+  }, []);
+
+  const handleBirdEnded = (birdId) => {
+    setPlayingIds((prev) => {
+      if (!prev.has(birdId)) return prev;
+      const next = new Set(prev);
+      next.delete(birdId);
+      return next;
+    });
+  };
+
+  const handleBirdClick = (bird) => {
+    if (!bird.sound) return;
+
+    let audio = audioRefs.current[bird.id];
+    if (!audio) {
+      audio = new Audio(bird.sound);
+      audio.loop = false;
+      audio.addEventListener('ended', () => handleBirdEnded(bird.id));
+      audioRefs.current[bird.id] = audio;
+    }
+
+    audio.currentTime = 0;
+
+    const startPlaying = () => {
+      setPlayingIds((prev) => {
+        if (prev.has(bird.id)) return prev;
+        const next = new Set(prev);
+        next.add(bird.id);
+        return next;
+      });
+    };
+
+    audio.play().then(startPlaying).catch(() => {
+      handleBirdEnded(bird.id);
+    });
+  };
+
+  const handleReset = () => {
+    Object.values(audioRefs.current).forEach((audio) => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+    setPlayingIds(new Set());
+  };
+
   return (
     <div className="background">
       <div className="header-row">
@@ -31,55 +141,34 @@ function App() {
         <img src={pinkStar} alt="pink star" className="star" />
         <div className="playing-indicator">
           <img src={volumeIcon} alt="volume icon" className="volume-icon" />
-          <p className="playing-text">Playing 3 Birds</p>
-          <button className="reset-button">Reset</button>
+          <p className="playing-text">
+            Playing {playingCount} Bird{playingCount === 1 ? '' : 's'}
+          </p>
+          {playingCount > 0 && (
+            <button type="button" className="reset-button" onClick={handleReset}>
+              Reset
+            </button>
+          )}
         </div>
         <div className="star-spacer" aria-hidden="true" />
       </div>
 
       <div className="bird-container">
-        <div className="bird-card">
-          <img src={robinBird} alt="robin bird" className="bird-image" />
-          <div className="bird-text">
-            <p className="bird-name">Robin</p>
-            <p className="bird-description">Soft Chirping</p>
-          </div>
-        </div>
-        <div className="bird-card">
-          <img src={cardinalBird} alt="cardinal bird" className="bird-image" />
-          <div className="bird-text">
-            <p className="bird-name">Cardinal</p>
-            <p className="bird-description">Clear Whistling</p>
-          </div>
-        </div>
-        <div className="bird-card">
-          <img src={redWingedBlackbirdBird} alt="red winged blackbird bird" className="bird-image" />
-          <div className="bird-text">
-            <p className="bird-name">Red Winged Blackbird</p>
-            <p className="bird-description">Musical Conk-La-Ree</p>
-          </div>
-        </div>
-        <div className="bird-card">
-          <img src={songSparrowBird} alt="song sparrow bird" className="bird-image" />
-          <div className="bird-text">
-            <p className="bird-name">Song Sparrow</p>
-            <p className="bird-description">Melodic Trill</p>
-          </div>
-        </div>
-        <div className="bird-card">
-          <img src={mourningDoveBird} alt="mourning dove bird" className="bird-image" />
-          <div className="bird-text">
-            <p className="bird-name">Mourning Dove</p>
-            <p className="bird-description">Soft Cooing</p>
-          </div>
-        </div>
-        <div className="bird-card">
-          <img src={chickadeeBird} alt="chickadee bird" className="bird-image" />
-          <div className="bird-text">
-            <p className="bird-name">Chickadee</p>
-            <p className="bird-description">Chick-a-dee-dee-dee</p>
-          </div>
-        </div>
+        {BIRDS.map((bird) => (
+          <button
+            key={bird.id}
+            type="button"
+            className={`bird-card${playingIds.has(bird.id) ? ' playing' : ''}`}
+            onClick={() => handleBirdClick(bird)}
+            aria-pressed={playingIds.has(bird.id)}
+          >
+            <img src={bird.image} alt={bird.name} className="bird-image" />
+            <div className="bird-text">
+              <p className="bird-name">{bird.name}</p>
+              <p className="bird-description">{bird.description}</p>
+            </div>
+          </button>
+        ))}
       </div>
     </div>
   );
