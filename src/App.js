@@ -162,11 +162,17 @@ function App() {
           <button
             key={bird.id}
             type="button"
-            className={`bird-card${playingIds.has(bird.id) ? ' playing' : ''}`}
+            className={`bird-card bird-${bird.id}${playingIds.has(bird.id) ? ' playing' : ''}`}
             onClick={() => handleBirdClick(bird)}
             aria-pressed={playingIds.has(bird.id)}
           >
             <img src={bird.image} alt={bird.name} className="bird-image" />
+            <span className="note-trail" aria-hidden="true">
+              <span className="music-note note-1">♪</span>
+              <span className="music-note note-2">♫</span>
+              <span className="music-note note-3">♪</span>
+              <span className="music-staff" />
+            </span>
             <div className="bird-text">
               <p className="bird-name">{bird.name}</p>
               <p className="bird-description">{bird.description}</p>
