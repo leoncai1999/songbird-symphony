@@ -10,6 +10,12 @@ import northernMockingbirdVideo from './assets/northern-mockingbird.mp4';
 import redWingedBlackbirdVideo from './assets/red-winged-blackbird.mp4';
 import songSparrowVideo from './assets/song-sparrow.mp4';
 import northernCardinalVideo from './assets/northern-cardinal.mp4';
+import indigoBuntingAudio from './assets/indigo-bunting.mp3';
+import commonYellowthroatAudio from './assets/common-yellowthroat.mp3';
+import northernMockingbirdAudio from './assets/northern-mockingbird.mp3';
+import redWingedBlackbirdAudio from './assets/red-winged-blackbird.mp3';
+import songSparrowAudio from './assets/song-sparrow.mp3';
+import northernCardinalAudio from './assets/northern-cardinal.mp3';
 import indigoBuntingPoster from './assets/indigo-bunting.png';
 import commonYellowthroatPoster from './assets/common-yellowthroat.png';
 import northernMockingbirdPoster from './assets/northern-mockingbird.png';
@@ -21,6 +27,7 @@ const BIRDS = [
   {
     id: 'indigo-bunting',
     video: indigoBuntingVideo,
+    audio: indigoBuntingAudio,
     poster: indigoBuntingPoster,
     name: 'Indigo Bunting',
     description: 'Sweet Chirping',
@@ -28,6 +35,7 @@ const BIRDS = [
   {
     id: 'common-yellowthroat',
     video: commonYellowthroatVideo,
+    audio: commonYellowthroatAudio,
     poster: commonYellowthroatPoster,
     name: 'Common Yellowthroat',
     description: 'witchety-witchety-witchety',
@@ -35,6 +43,7 @@ const BIRDS = [
   {
     id: 'northern-mockingbird',
     video: northernMockingbirdVideo,
+    audio: northernMockingbirdAudio,
     poster: northernMockingbirdPoster,
     name: 'Northern Mockingbird',
     description: 'Song Composer',
@@ -42,6 +51,7 @@ const BIRDS = [
   {
     id: 'red-winged-blackbird',
     video: redWingedBlackbirdVideo,
+    audio: redWingedBlackbirdAudio,
     poster: redWingedBlackbirdPoster,
     name: 'Red Winged Blackbird',
     description: 'cokn-la-ree!',
@@ -49,6 +59,7 @@ const BIRDS = [
   {
     id: 'song-sparrow',
     video: songSparrowVideo,
+    audio: songSparrowAudio,
     poster: songSparrowPoster,
     name: 'Song Sparrow',
     description: 'Loud Clanking Song',
@@ -56,6 +67,7 @@ const BIRDS = [
   {
     id: 'northern-cardinal',
     video: northernCardinalVideo,
+    audio: northernCardinalAudio,
     poster: northernCardinalPoster,
     name: 'Northern Cardinal',
     description: 'Loud Metallic Clip',
@@ -104,7 +116,7 @@ function App() {
     }
 
     const context = getAudioContext();
-    const response = await fetch(bird.video);
+    const response = await fetch(bird.audio);
     const audioData = await response.arrayBuffer();
     const buffer = await context.decodeAudioData(audioData);
     audioBuffersRef.current[bird.id] = buffer;
@@ -204,7 +216,6 @@ function App() {
         source.connect(context.destination);
         source.onended = () => {
           delete audioSourcesRef.current[bird.id];
-          handleBirdEnded(bird.id);
         };
         audioSourcesRef.current[bird.id] = source;
         source.start(0);
@@ -282,9 +293,14 @@ function App() {
                   muted
                   playsInline
                   preload="none"
+                  disablePictureInPicture
+                  controls={false}
                   onLoadedData={() => handleVideoReady(bird.id)}
                   onPlaying={() => handleVideoReady(bird.id)}
-                  onEnded={() => handleBirdEnded(bird.id)}
+                  onEnded={() => {
+                    stopBirdAudio(bird.id);
+                    handleBirdEnded(bird.id);
+                  }}
                   aria-label={`${bird.name} video`}
                 />
               </div>
