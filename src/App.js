@@ -46,7 +46,7 @@ const BIRDS = [
     audio: northernMockingbirdAudio,
     poster: northernMockingbirdPoster,
     name: 'Northern Mockingbird',
-    description: 'Song Composer',
+    description: 'Short Musical Chirps',
   },
   {
     id: 'red-winged-blackbird',
@@ -62,7 +62,7 @@ const BIRDS = [
     audio: songSparrowAudio,
     poster: songSparrowPoster,
     name: 'Song Sparrow',
-    description: 'Loud Clanking Song',
+    description: 'Chirp Chirp Chirp Trill',
   },
   {
     id: 'northern-cardinal',
@@ -70,7 +70,7 @@ const BIRDS = [
     audio: northernCardinalAudio,
     poster: northernCardinalPoster,
     name: 'Northern Cardinal',
-    description: 'Loud Metallic Clip',
+    description: 'Pure-toned Repeated Whistles',
   },
 ];
 

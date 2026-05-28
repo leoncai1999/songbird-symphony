@@ -314,13 +314,13 @@
 }
 
 .bird-name {
-  font-size: 15px;
+  font-size: 13px;
   color: #0A724B;
   font-family: 'Bobby Jones', serif;
 }
 
 .bird-description {
-  font-size: 10px;
+  font-size: 9px;
   color: #4F3A2F;
   font-family: 'Bobby Jones', serif;
 }
@@ -377,11 +377,11 @@
   }
 
   .bird-name {
-    font-size: clamp(12px, 4.2vw, 17px);
+    font-size: clamp(10px, 4.2vw, 14px);
   }
 
   .bird-description {
-    font-size: clamp(8px, 2.7vw, 11px);
+    font-size: clamp(7px, 2.7vw, 9px);
   }
 }
 
