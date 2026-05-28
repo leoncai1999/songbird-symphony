@@ -78,11 +78,8 @@ const getVideoSource = (video) => `${video}#t=0.001`;
 
 function App() {
   const videoRefs = useRef({});
+  const audioRefs = useRef({});
   const loadedVideoIds = useRef(new Set());
-  const audioContextRef = useRef(null);
-  const audioBuffersRef = useRef({});
-  const audioSourcesRef = useRef({});
-  const playTokensRef = useRef({});
   const [playingIds, setPlayingIds] = useState(() => new Set());
   const [readyVideoIds, setReadyVideoIds] = useState(() => new Set());
 
@@ -94,51 +91,14 @@ function App() {
       Object.values(refs).forEach((video) => {
         video.pause();
       });
-      Object.values(audioSourcesRef.current).forEach((source) => {
-        source.onended = null;
-        source.stop();
-      });
     };
   }, []);
-
-  const getAudioContext = () => {
-    if (!audioContextRef.current) {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      audioContextRef.current = new AudioContext();
-    }
-
-    return audioContextRef.current;
-  };
-
-  const getAudioBuffer = async (bird) => {
-    if (audioBuffersRef.current[bird.id]) {
-      return audioBuffersRef.current[bird.id];
-    }
-
-    const context = getAudioContext();
-    const response = await fetch(bird.audio);
-    const audioData = await response.arrayBuffer();
-    const buffer = await context.decodeAudioData(audioData);
-    audioBuffersRef.current[bird.id] = buffer;
-    return buffer;
-  };
-
-  const stopBirdAudio = (birdId) => {
-    delete playTokensRef.current[birdId];
-    const source = audioSourcesRef.current[birdId];
-    if (!source) return;
-
-    source.onended = null;
-    source.stop();
-    delete audioSourcesRef.current[birdId];
-  };
 
   const handleBirdEnded = (birdId) => {
     const video = videoRefs.current[birdId];
     if (video) {
       resetVideoToStart(video);
     }
-    stopBirdAudio(birdId);
 
     setPlayingIds((prev) => {
       if (!prev.has(birdId)) return prev;
@@ -179,50 +139,45 @@ function App() {
 
   const handleBirdClick = (bird) => {
     const video = videoRefs.current[bird.id];
-    if (!video) return;
-
+    const audio = audioRefs.current[bird.id];
+  
+    if (!video || !audio) return;
+  
+    // STOP if already playing
     if (playingIds.has(bird.id)) {
       video.pause();
+      audio.pause();
+  
       resetVideoToStart(video);
+      audio.currentTime = 0;
+  
       handleBirdEnded(bird.id);
+  
       return;
     }
-
+  
     ensureVideoLoaded(bird, video);
+  
     resetVideoToStart(video);
+    audio.currentTime = 0;
+  
     video.muted = true;
-    const playToken = Symbol(bird.id);
-    playTokensRef.current[bird.id] = playToken;
-    const context = getAudioContext();
-
+  
     setPlayingIds((prev) => {
       if (prev.has(bird.id)) return prev;
+  
       const next = new Set(prev);
       next.add(bird.id);
+  
       return next;
     });
-
+  
     Promise.all([
       video.play(),
-      context.state === 'suspended' ? context.resume() : Promise.resolve(),
-      getAudioBuffer(bird),
-    ])
-      .then(([, , buffer]) => buffer)
-      .then((buffer) => {
-        if (playTokensRef.current[bird.id] !== playToken) return;
-
-        const source = context.createBufferSource();
-        source.buffer = buffer;
-        source.connect(context.destination);
-        source.onended = () => {
-          delete audioSourcesRef.current[bird.id];
-        };
-        audioSourcesRef.current[bird.id] = source;
-        source.start(0);
-      })
-      .catch(() => {
-        handleBirdEnded(bird.id);
-      });
+      audio.play(),
+    ]).catch(() => {
+      handleBirdEnded(bird.id);
+    });
   };
 
   const handleReset = () => {
@@ -230,12 +185,10 @@ function App() {
       video.pause();
       resetVideoToStart(video);
     });
-    Object.values(audioSourcesRef.current).forEach((source) => {
-      source.onended = null;
-      source.stop();
+    Object.values(audioRefs.current).forEach((audio) => {
+      audio.pause();
+      audio.currentTime = 0;
     });
-    audioSourcesRef.current = {};
-    playTokensRef.current = {};
     setPlayingIds(new Set());
   };
 
@@ -298,10 +251,25 @@ function App() {
                   onLoadedData={() => handleVideoReady(bird.id)}
                   onPlaying={() => handleVideoReady(bird.id)}
                   onEnded={() => {
-                    stopBirdAudio(bird.id);
+                    const audio = audioRefs.current[bird.id];
+                    if (audio) {
+                      audio.pause();
+                      audio.currentTime = 0;
+                    }
                     handleBirdEnded(bird.id);
                   }}
                   aria-label={`${bird.name} video`}
+                />
+                <audio
+                  ref={(node) => {
+                    if (node) {
+                      audioRefs.current[bird.id] = node;
+                    } else {
+                      delete audioRefs.current[bird.id];
+                    }
+                  }}
+                  src={bird.audio}
+                  preload="none"
                 />
               </div>
               <div className="bird-text">
