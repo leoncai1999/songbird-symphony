@@ -4,75 +4,63 @@ import './App.css';
 import headerBird from './assets/header-bird.png';
 import blueStar from './assets/blue-star.png';
 import pinkStar from './assets/pink-star.png';
-import robinBird from './assets/robin-bird.jpg';
-import cardinalBird from './assets/cardinal-bird.jpg';
-import redWingedBlackbirdBird from './assets/red-winged-blackbird-bird.jpg';
-import songSparrowBird from './assets/song-sparrow-bird.jpg';
-import mourningDoveBird from './assets/mourning-dove-bird.jpg';
-import chickadeeBird from './assets/chickadee-bird.jpg';
-import robinSound from './assets/robin-sound.mp3';
-import cardinalSound from './assets/cardinal-sound.mp3';
-import redWingedBlackbirdSound from './assets/red-winged-blackbird-sound.mp3';
-import songSparrowSound from './assets/song-sparrow-sound.mp3'
-import mourningDoveSound from './assets/mourning-dove-sound.mp3';
-import chickadeeSound from './assets/chickadee-sound.mp3';
+import indigoBuntingVideo from './assets/indigo-bunting.mp4';
+import commonYellowthroatVideo from './assets/common-yellowthroat.mp4';
+import northernMockingbirdVideo from './assets/northern-mockingbird.mp4';
+import redWingedBlackbirdVideo from './assets/red-winged-blackbird.mp4';
+import songSparrowVideo from './assets/song-sparrow.mp4';
+import northernCardinalVideo from './assets/northern-cardinal.mp4';
 
 const BIRDS = [
   {
-    id: 'robin',
-    image: robinBird,
-    sound: robinSound,
-    name: 'Robin',
-    description: 'Soft Chirping',
+    id: 'indigo-bunting',
+    video: indigoBuntingVideo,
+    name: 'Indigo Bunting',
+    description: 'Sweet Chirping',
   },
   {
-    id: 'cardinal',
-    image: cardinalBird,
-    sound: cardinalSound,
-    name: 'Cardinal',
-    description: 'Clear Whistling',
+    id: 'common-yellowthroat',
+    video: commonYellowthroatVideo,
+    name: 'Common Yellowthroat',
+    description: 'witchety-witchety-witchety',
+  },
+  {
+    id: 'northern-mockingbird',
+    video: northernMockingbirdVideo,
+    name: 'Northern Mockingbird',
+    description: 'Song Composer',
   },
   {
     id: 'red-winged-blackbird',
-    image: redWingedBlackbirdBird,
-    sound: redWingedBlackbirdSound,
+    video: redWingedBlackbirdVideo,
     name: 'Red Winged Blackbird',
-    description: 'Musical Conk-La-Ree',
+    description: 'cokn-la-ree!',
   },
   {
     id: 'song-sparrow',
-    image: songSparrowBird,
-    sound: songSparrowSound,
+    video: songSparrowVideo,
     name: 'Song Sparrow',
-    description: 'Melodic Trill',
+    description: 'Loud Clanking Song',
   },
   {
-    id: 'mourning-dove',
-    image: mourningDoveBird,
-    sound: mourningDoveSound,
-    name: 'Mourning Dove',
-    description: 'Soft Cooing',
-  },
-  {
-    id: 'chickadee',
-    image: chickadeeBird,
-    sound: chickadeeSound,
-    name: 'Chickadee',
-    description: 'Chick-a-dee-dee-dee',
+    id: 'northern-cardinal',
+    video: northernCardinalVideo,
+    name: 'Northern Cardinal',
+    description: 'Loud Metallic Clip',
   },
 ];
 
 function App() {
-  const audioRefs = useRef({});
+  const videoRefs = useRef({});
   const [playingIds, setPlayingIds] = useState(() => new Set());
 
   const playingCount = playingIds.size;
 
   useEffect(() => {
-    const refs = audioRefs.current;
+    const refs = videoRefs.current;
     return () => {
-      Object.values(refs).forEach((audio) => {
-        audio.pause();
+      Object.values(refs).forEach((video) => {
+        video.pause();
       });
     };
   }, []);
@@ -87,43 +75,34 @@ function App() {
   };
 
   const handleBirdClick = (bird) => {
-    if (!bird.sound) return;
-
-    let audio = audioRefs.current[bird.id];
-    if (!audio) {
-      audio = new Audio(bird.sound);
-      audio.loop = false;
-      audio.addEventListener('ended', () => handleBirdEnded(bird.id));
-      audioRefs.current[bird.id] = audio;
-    }
+    const video = videoRefs.current[bird.id];
+    if (!video) return;
 
     if (playingIds.has(bird.id)) {
-      audio.pause();
-      audio.currentTime = 0;
+      video.pause();
+      video.currentTime = 0;
       handleBirdEnded(bird.id);
       return;
     }
 
-    audio.currentTime = 0;
+    video.currentTime = 0;
 
-    const startPlaying = () => {
-      setPlayingIds((prev) => {
-        if (prev.has(bird.id)) return prev;
-        const next = new Set(prev);
-        next.add(bird.id);
-        return next;
-      });
-    };
+    setPlayingIds((prev) => {
+      if (prev.has(bird.id)) return prev;
+      const next = new Set(prev);
+      next.add(bird.id);
+      return next;
+    });
 
-    audio.play().then(startPlaying).catch(() => {
+    video.play().catch(() => {
       handleBirdEnded(bird.id);
     });
   };
 
   const handleReset = () => {
-    Object.values(audioRefs.current).forEach((audio) => {
-      audio.pause();
-      audio.currentTime = 0;
+    Object.values(videoRefs.current).forEach((video) => {
+      video.pause();
+      video.currentTime = 0;
     });
     setPlayingIds(new Set());
   };
@@ -166,13 +145,21 @@ function App() {
             onClick={() => handleBirdClick(bird)}
             aria-pressed={playingIds.has(bird.id)}
           >
-            <img src={bird.image} alt={bird.name} className="bird-image" />
-            <span className="note-trail" aria-hidden="true">
-              <span className="music-note note-1">♪</span>
-              <span className="music-note note-2">♫</span>
-              <span className="music-note note-3">♪</span>
-              <span className="music-staff" />
-            </span>
+            <video
+              ref={(node) => {
+                if (node) {
+                  videoRefs.current[bird.id] = node;
+                } else {
+                  delete videoRefs.current[bird.id];
+                }
+              }}
+              src={bird.video}
+              className="bird-video"
+              playsInline
+              preload="metadata"
+              onEnded={() => handleBirdEnded(bird.id)}
+              aria-label={`${bird.name} video`}
+            />
             <div className="bird-text">
               <p className="bird-name">{bird.name}</p>
               <p className="bird-description">{bird.description}</p>

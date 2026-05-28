@@ -89,7 +89,7 @@
   height: 40px;
   background-color: #F8F7F5;
   border-radius: 10px;
-  border: 2px solid #0A724B;
+  border: 2.5px solid #0A724B;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -179,186 +179,41 @@
 .bird-card.playing {
   box-shadow:
     0px 4px 10px 2px rgba(0, 0, 0, 0.25),
-    0 0 0 2px #0A724B;
+    0 0 0 2.5px #0A724B;
 }
 
-.bird-robin {
-  --note-color: #BDF45F;
-  --note-left: 14%;
-  --note-top: 20%;
-  --note-rotate: -10deg;
-  --note-float-x: 10px;
-  --note-float-y: -16px;
-  --note-duration: 1.5s;
+.bird-indigo-bunting {
+  --video-position: 50% 50%;
 }
 
-.bird-cardinal {
-  --note-color: #FF7B7B;
-  --note-left: 66%;
-  --note-top: 18%;
-  --note-rotate: 8deg;
-  --note-float-x: 8px;
-  --note-float-y: -18px;
-  --note-duration: 1.9s;
+.bird-common-yellowthroat {
+  --video-position: 50% 50%;
+}
+
+.bird-northern-mockingbird {
+  --video-position: 50% 50%;
 }
 
 .bird-red-winged-blackbird {
-  --note-color: #FF8517;
-  --note-left: 67%;
-  --note-top: 14%;
-  --note-rotate: -7deg;
-  --note-float-x: -8px;
-  --note-float-y: -14px;
-  --note-duration: 1.1s;
+  --video-position: 50% 50%;
 }
 
 .bird-song-sparrow {
-  --note-color: #25AEB6;
-  --note-left: 64%;
-  --note-top: 18%;
-  --note-rotate: 6deg;
-  --note-float-x: 8px;
-  --note-float-y: -12px;
-  --note-duration: 1.25s;
+  --video-position: 50% 50%;
 }
 
-.bird-mourning-dove {
-  --note-color: #D4A4FF;
-  --note-left: 63%;
-  --note-top: 17%;
-  --note-rotate: -8deg;
-  --note-float-x: 6px;
-  --note-float-y: -20px;
-  --note-duration: 2.2s;
+.bird-northern-cardinal {
+  --video-position: 50% 50%;
 }
 
-.bird-chickadee {
-  --note-color: #F5C400;
-  --note-left: 65%;
-  --note-top: 18%;
-  --note-rotate: 8deg;
-  --note-float-x: -7px;
-  --note-float-y: -16px;
-  --note-duration: 1s;
-}
-
-.note-trail {
-  color: var(--note-color);
-  height: 58%;
-  inset: 0 0 auto;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
-  position: absolute;
-  transform: rotate(var(--note-rotate));
-  transform-origin: center;
-  transition: opacity 160ms ease;
-  z-index: 2;
-}
-
-.bird-card.playing .note-trail {
-  opacity: 1;
-}
-
-.music-note {
-  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.55));
-  font-family: Georgia, serif;
-  font-size: clamp(16px, 14cqw, 26px);
-  font-weight: 700;
-  left: var(--note-left);
-  line-height: 1;
-  opacity: 0;
-  position: absolute;
-  top: var(--note-top);
-}
-
-.note-1 {
-  animation: note-float var(--note-duration) ease-out infinite;
-}
-
-.note-2 {
-  animation: note-float var(--note-duration) ease-out infinite 0.22s;
-  font-size: clamp(18px, 16cqw, 30px);
-  left: calc(var(--note-left) + 18%);
-  top: calc(var(--note-top) + 10%);
-}
-
-.note-3 {
-  animation: note-float var(--note-duration) ease-out infinite 0.42s;
-  left: calc(var(--note-left) + 30%);
-  top: calc(var(--note-top) - 3%);
-}
-
-.music-staff {
-  border-top: 1px solid currentColor;
-  height: 16px;
-  left: calc(var(--note-left) - 3%);
-  opacity: 0.42;
-  position: absolute;
-  top: calc(var(--note-top) + 33%);
-  transform: skewY(-13deg);
-  width: 45%;
-}
-
-.music-staff::before,
-.music-staff::after {
-  border-top: 1px solid currentColor;
-  content: "";
-  left: 0;
-  position: absolute;
-  width: 100%;
-}
-
-.music-staff::before {
-  top: 5px;
-}
-
-.music-staff::after {
-  top: 10px;
-}
-
-.bird-robin .music-staff {
-  left: 10%;
-  top: 43%;
-}
-
-.bird-red-winged-blackbird .music-staff,
-.bird-song-sparrow .music-staff,
-.bird-chickadee .music-staff {
-  width: 38%;
-}
-
-.bird-mourning-dove .note-trail {
-  transform: rotate(var(--note-rotate)) scale(1.05);
-}
-
-.bird-chickadee .music-note {
-  animation-timing-function: steps(3);
-}
-
-@keyframes note-float {
-  0% {
-    opacity: 0;
-    transform: translate(0, 8px) scale(0.72) rotate(-8deg);
-  }
-  18% {
-    opacity: 0.95;
-  }
-  70% {
-    opacity: 0.88;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(var(--note-float-x), var(--note-float-y)) scale(1.08) rotate(10deg);
-  }
-}
-
-.bird-image {
-  width: 100%;
+.bird-video {
+  width: calc(100% + 2px);
   height: 100%;
   min-height: 0;
   display: block;
   object-fit: cover;
+  object-position: var(--video-position);
+  transform: translateX(-1px);
 }
 
 .bird-text {
@@ -383,13 +238,13 @@
 }
 
 .bird-name {
-  font-size: 17px;
+  font-size: 15px;
   color: #0A724B;
   font-family: 'Bobby Jones', serif;
 }
 
 .bird-description {
-  font-size: 11px;
+  font-size: 10px;
   color: #4F3A2F;
   font-family: 'Bobby Jones', serif;
 }
@@ -450,12 +305,5 @@
 
   .bird-description {
     font-size: clamp(8px, 2.7vw, 11px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .music-note {
-    animation: none;
-    opacity: 0.9;
   }
 }
