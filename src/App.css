@@ -53,14 +53,14 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin-top: 16px;
+  margin-top: 8px;
 }
 
 .playing-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 14px;
+  margin-top: 4px;
 }
 
 .header-bird {
@@ -130,19 +130,28 @@
   --grid-pad: clamp(8px, 1.5vh, 16px);
   background-color: #C2E0BA;
   container-type: size;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: var(--grid-gap);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 0.9vh, 8px);
+  justify-content: center;
   padding: var(--grid-pad);
   width: 100vw;
   max-width: 100vw;
   margin-inline: calc(50% - 50vw);
   flex: 1;
   min-height: 0;
-  margin-top: 16px;
+  margin-top: 12px;
   box-sizing: border-box;
   border-radius: 10px 10px 0 0;
+}
+
+.bird-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: var(--grid-gap);
+  flex: 1;
+  min-height: 0;
 }
 
 @media (min-width: 500px) {
@@ -151,6 +160,15 @@
     max-width: 372px;
     margin-inline: 0;
   }
+}
+
+.video-credits {
+  color: #4F3A2F;
+  flex-shrink: 0;
+  font-family: 'Bobby Jones', serif;
+  font-size: 9px;
+  line-height: 0;
+  text-align: center;
 }
 
 .bird-card {
@@ -275,7 +293,7 @@
 
   .subtitle-row {
     gap: clamp(6px, 2vw, 10px);
-    margin-top: clamp(12px, 4vw, 16px);
+    margin-top: clamp(6px, 4vw, 10px);
   }
 
   .playing-indicator {
@@ -288,7 +306,7 @@
   }
 
   .playing-row {
-    margin-top: clamp(12px, 4vw, 14px);
+    margin-top: clamp(2px, 4vw, 6px);
   }
 
   .description {
@@ -296,7 +314,7 @@
   }
 
   .bird-container {
-    margin-top: clamp(14px, 4.5vw, 16px);
+    margin-top: clamp(10px, 4.5vw, 14px);
   }
 
   .bird-name {
