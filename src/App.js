@@ -67,6 +67,10 @@ const getVideoSource = (video) => `${video}#t=0.001`;
 function App() {
   const videoRefs = useRef({});
   const loadedVideoIds = useRef(new Set());
+  const audioContextRef = useRef(null);
+  const audioBuffersRef = useRef({});
+  const audioSourcesRef = useRef({});
+  const playTokensRef = useRef({});
   const [playingIds, setPlayingIds] = useState(() => new Set());
   const [readyVideoIds, setReadyVideoIds] = useState(() => new Set());
 
@@ -78,14 +82,51 @@ function App() {
       Object.values(refs).forEach((video) => {
         video.pause();
       });
+      Object.values(audioSourcesRef.current).forEach((source) => {
+        source.onended = null;
+        source.stop();
+      });
     };
   }, []);
+
+  const getAudioContext = () => {
+    if (!audioContextRef.current) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      audioContextRef.current = new AudioContext();
+    }
+
+    return audioContextRef.current;
+  };
+
+  const getAudioBuffer = async (bird) => {
+    if (audioBuffersRef.current[bird.id]) {
+      return audioBuffersRef.current[bird.id];
+    }
+
+    const context = getAudioContext();
+    const response = await fetch(bird.video);
+    const audioData = await response.arrayBuffer();
+    const buffer = await context.decodeAudioData(audioData);
+    audioBuffersRef.current[bird.id] = buffer;
+    return buffer;
+  };
+
+  const stopBirdAudio = (birdId) => {
+    delete playTokensRef.current[birdId];
+    const source = audioSourcesRef.current[birdId];
+    if (!source) return;
+
+    source.onended = null;
+    source.stop();
+    delete audioSourcesRef.current[birdId];
+  };
 
   const handleBirdEnded = (birdId) => {
     const video = videoRefs.current[birdId];
     if (video) {
       resetVideoToStart(video);
     }
+    stopBirdAudio(birdId);
 
     setPlayingIds((prev) => {
       if (!prev.has(birdId)) return prev;
@@ -137,6 +178,10 @@ function App() {
 
     ensureVideoLoaded(bird, video);
     resetVideoToStart(video);
+    video.muted = true;
+    const playToken = Symbol(bird.id);
+    playTokensRef.current[bird.id] = playToken;
+    const context = getAudioContext();
 
     setPlayingIds((prev) => {
       if (prev.has(bird.id)) return prev;
@@ -145,9 +190,28 @@ function App() {
       return next;
     });
 
-    video.play().catch(() => {
-      handleBirdEnded(bird.id);
-    });
+    Promise.all([
+      video.play(),
+      context.state === 'suspended' ? context.resume() : Promise.resolve(),
+      getAudioBuffer(bird),
+    ])
+      .then(([, , buffer]) => buffer)
+      .then((buffer) => {
+        if (playTokensRef.current[bird.id] !== playToken) return;
+
+        const source = context.createBufferSource();
+        source.buffer = buffer;
+        source.connect(context.destination);
+        source.onended = () => {
+          delete audioSourcesRef.current[bird.id];
+          handleBirdEnded(bird.id);
+        };
+        audioSourcesRef.current[bird.id] = source;
+        source.start(0);
+      })
+      .catch(() => {
+        handleBirdEnded(bird.id);
+      });
   };
 
   const handleReset = () => {
@@ -155,6 +219,12 @@ function App() {
       video.pause();
       resetVideoToStart(video);
     });
+    Object.values(audioSourcesRef.current).forEach((source) => {
+      source.onended = null;
+      source.stop();
+    });
+    audioSourcesRef.current = {};
+    playTokensRef.current = {};
     setPlayingIds(new Set());
   };
 
@@ -209,6 +279,7 @@ function App() {
                   }}
                   className="bird-video"
                   poster={bird.poster}
+                  muted
                   playsInline
                   preload="none"
                   onLoadedData={() => handleVideoReady(bird.id)}
