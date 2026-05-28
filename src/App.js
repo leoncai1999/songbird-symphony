@@ -224,9 +224,12 @@ function App() {
             </button>
           ))}
         </div>
-        <p className="video-credits">
-          Video Credits: Brett Billings, Ryan Hagetry, Doug Canfield, USFWS/NCTC
-        </p>
+        <div className="credits-block">
+          <p className="video-credits">
+            Video Credits: Brett Billings, Ryan Hagetry, Doug Canfield, USFWS/NCTC
+          </p>
+          <p className="conceived-by">Conceived by Kristen Osborn and built by Leon Cai</p>
+        </div>
       </div>
     </div>
   );
