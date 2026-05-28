@@ -118,13 +118,13 @@ function App() {
     });
   };
 
-  const ensureVideoLoaded = (bird, video) => {
-    if (loadedVideoIds.current.has(bird.id)) return;
+  // const ensureVideoLoaded = (bird, video) => {
+  //   if (loadedVideoIds.current.has(bird.id)) return;
 
-    video.src = getVideoSource(bird.video);
-    video.load();
-    loadedVideoIds.current.add(bird.id);
-  };
+  //   video.src = getVideoSource(bird.video);
+  //   video.load();
+  //   loadedVideoIds.current.add(bird.id);
+  // };
 
   const resetVideoToStart = (video) => {
     if (video.readyState === 0) {
