@@ -74,12 +74,12 @@ const BIRDS = [
   },
 ];
 
-const getVideoSource = (video) => `${video}#t=0.001`;
+// const getVideoSource = (video) => `${video}#t=0.001`;
 
 function App() {
   const videoRefs = useRef({});
   const audioRefs = useRef({});
-  const loadedVideoIds = useRef(new Set());
+  // const loadedVideoIds = useRef(new Set());
   const [playingIds, setPlayingIds] = useState(() => new Set());
   const [readyVideoIds, setReadyVideoIds] = useState(() => new Set());
   const [showRestingPopup, setShowRestingPopup] = useState(false);
