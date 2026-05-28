@@ -82,6 +82,7 @@ function App() {
   const loadedVideoIds = useRef(new Set());
   const [playingIds, setPlayingIds] = useState(() => new Set());
   const [readyVideoIds, setReadyVideoIds] = useState(() => new Set());
+  const [showRestingPopup, setShowRestingPopup] = useState(false);
 
   const playingCount = playingIds.size;
 
@@ -138,46 +139,48 @@ function App() {
   };
 
   const handleBirdClick = (bird) => {
-    const video = videoRefs.current[bird.id];
-    const audio = audioRefs.current[bird.id];
+    // const video = videoRefs.current[bird.id];
+    // const audio = audioRefs.current[bird.id];
   
-    if (!video || !audio) return;
+    // if (!video || !audio) return;
   
-    // STOP if already playing
-    if (playingIds.has(bird.id)) {
-      video.pause();
-      audio.pause();
+    // // STOP if already playing
+    // if (playingIds.has(bird.id)) {
+    //   video.pause();
+    //   audio.pause();
   
-      resetVideoToStart(video);
-      audio.currentTime = 0;
+    //   resetVideoToStart(video);
+    //   audio.currentTime = 0;
   
-      handleBirdEnded(bird.id);
+    //   handleBirdEnded(bird.id);
   
-      return;
-    }
+    //   return;
+    // }
   
-    ensureVideoLoaded(bird, video);
+    // ensureVideoLoaded(bird, video);
   
-    resetVideoToStart(video);
-    audio.currentTime = 0;
+    // resetVideoToStart(video);
+    // audio.currentTime = 0;
   
-    video.muted = true;
+    // video.muted = true;
   
-    setPlayingIds((prev) => {
-      if (prev.has(bird.id)) return prev;
+    // setPlayingIds((prev) => {
+    //   if (prev.has(bird.id)) return prev;
   
-      const next = new Set(prev);
-      next.add(bird.id);
+    //   const next = new Set(prev);
+    //   next.add(bird.id);
   
-      return next;
-    });
+    //   return next;
+    // });
   
-    Promise.all([
-      video.play(),
-      audio.play(),
-    ]).catch(() => {
-      handleBirdEnded(bird.id);
-    });
+    // Promise.all([
+    //   video.play(),
+    //   audio.play(),
+    // ]).catch(() => {
+    //   handleBirdEnded(bird.id);
+    // });
+
+    setShowRestingPopup(true);
   };
 
   const handleReset = () => {
@@ -286,6 +289,22 @@ function App() {
           <p className="conceived-by">Conceived by Kristen Osborn and built by Leon Cai</p>
         </div>
       </div>
+      {showRestingPopup && (
+        <div className="popup-overlay" onClick={() => setShowRestingPopup(false)}>
+          <div className="popup-card" onClick={(e) => e.stopPropagation()}>
+            <p className="popup-title">The birds are resting</p>
+            <p className="popup-text">
+              Check back later to play again!
+            </p>
+            <button
+              type="button"
+              className="popup-button"
+              onClick={() => setShowRestingPopup(false)}
+            >
+              Okay
+            </button>
+          </div>
+        </div>)}
     </div>
   );
 }
