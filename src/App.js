@@ -68,6 +68,7 @@ function App() {
   const videoRefs = useRef({});
   const loadedVideoIds = useRef(new Set());
   const [playingIds, setPlayingIds] = useState(() => new Set());
+  const [readyVideoIds, setReadyVideoIds] = useState(() => new Set());
 
   const playingCount = playingIds.size;
 
@@ -81,10 +82,24 @@ function App() {
   }, []);
 
   const handleBirdEnded = (birdId) => {
+    const video = videoRefs.current[birdId];
+    if (video) {
+      resetVideoToStart(video);
+    }
+
     setPlayingIds((prev) => {
       if (!prev.has(birdId)) return prev;
       const next = new Set(prev);
       next.delete(birdId);
+      return next;
+    });
+  };
+
+  const handleVideoReady = (birdId) => {
+    setReadyVideoIds((prev) => {
+      if (prev.has(birdId)) return prev;
+      const next = new Set(prev);
+      next.add(birdId);
       return next;
     });
   };
@@ -178,25 +193,30 @@ function App() {
             <button
               key={bird.id}
               type="button"
-              className={`bird-card bird-${bird.id}${playingIds.has(bird.id) ? ' playing' : ''}`}
+              className={`bird-card bird-${bird.id}${playingIds.has(bird.id) ? ' playing' : ''}${readyVideoIds.has(bird.id) ? ' video-ready' : ''}`}
               onClick={() => handleBirdClick(bird)}
               aria-pressed={playingIds.has(bird.id)}
             >
-              <video
-                ref={(node) => {
-                  if (node) {
-                    videoRefs.current[bird.id] = node;
-                  } else {
-                    delete videoRefs.current[bird.id];
-                  }
-                }}
-                className="bird-video"
-                poster={bird.poster}
-                playsInline
-                preload="none"
-                onEnded={() => handleBirdEnded(bird.id)}
-                aria-label={`${bird.name} video`}
-              />
+              <div className="bird-media">
+                <img src={bird.poster} alt="" className="bird-poster" aria-hidden="true" />
+                <video
+                  ref={(node) => {
+                    if (node) {
+                      videoRefs.current[bird.id] = node;
+                    } else {
+                      delete videoRefs.current[bird.id];
+                    }
+                  }}
+                  className="bird-video"
+                  poster={bird.poster}
+                  playsInline
+                  preload="none"
+                  onLoadedData={() => handleVideoReady(bird.id)}
+                  onPlaying={() => handleVideoReady(bird.id)}
+                  onEnded={() => handleBirdEnded(bird.id)}
+                  aria-label={`${bird.name} video`}
+                />
+              </div>
               <div className="bird-text">
                 <p className="bird-name">{bird.name}</p>
                 <p className="bird-description">{bird.description}</p>

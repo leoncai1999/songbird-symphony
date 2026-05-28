@@ -224,6 +224,13 @@
   --video-position: 50% 50%;
 }
 
+.bird-media {
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.bird-poster,
 .bird-video {
   width: calc(100% + 2px);
   height: 100%;
@@ -232,6 +239,24 @@
   object-fit: cover;
   object-position: var(--video-position);
   transform: translateX(-1px);
+}
+
+.bird-poster {
+  position: relative;
+  z-index: 2;
+}
+
+.bird-video {
+  inset: 0;
+  opacity: 0;
+  position: absolute;
+  transition: opacity 80ms linear;
+  z-index: 1;
+}
+
+.bird-card.video-ready .bird-video {
+  opacity: 1;
+  z-index: 3;
 }
 
 .bird-text {
