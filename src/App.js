@@ -50,6 +50,8 @@ const BIRDS = [
   },
 ];
 
+const getVideoSource = (video) => `${video}#t=0.001`;
+
 function App() {
   const videoRefs = useRef({});
   const [playingIds, setPlayingIds] = useState(() => new Set());
@@ -58,6 +60,10 @@ function App() {
 
   useEffect(() => {
     const refs = videoRefs.current;
+    Object.values(refs).forEach((video) => {
+      video.load();
+    });
+
     return () => {
       Object.values(refs).forEach((video) => {
         video.pause();
@@ -74,18 +80,31 @@ function App() {
     });
   };
 
+  const resetVideoToStart = (video) => {
+    if (video.readyState === 0) {
+      video.load();
+      return;
+    }
+
+    try {
+      video.currentTime = 0;
+    } catch {
+      video.load();
+    }
+  };
+
   const handleBirdClick = (bird) => {
     const video = videoRefs.current[bird.id];
     if (!video) return;
 
     if (playingIds.has(bird.id)) {
       video.pause();
-      video.currentTime = 0;
+      resetVideoToStart(video);
       handleBirdEnded(bird.id);
       return;
     }
 
-    video.currentTime = 0;
+    resetVideoToStart(video);
 
     setPlayingIds((prev) => {
       if (prev.has(bird.id)) return prev;
@@ -102,7 +121,7 @@ function App() {
   const handleReset = () => {
     Object.values(videoRefs.current).forEach((video) => {
       video.pause();
-      video.currentTime = 0;
+      resetVideoToStart(video);
     });
     setPlayingIds(new Set());
   };
@@ -153,10 +172,10 @@ function App() {
                   delete videoRefs.current[bird.id];
                 }
               }}
-              src={bird.video}
+              src={getVideoSource(bird.video)}
               className="bird-video"
               playsInline
-              preload="metadata"
+              preload="auto"
               onEnded={() => handleBirdEnded(bird.id)}
               aria-label={`${bird.name} video`}
             />
