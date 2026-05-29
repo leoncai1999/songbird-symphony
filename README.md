@@ -1,6 +1,6 @@
 # Songbird Symphony
 
-<img width="374" height="682" alt="Screenshot 2026-05-19 at 10 55 56 PM" src="https://github.com/user-attachments/assets/a0c7f7b3-3fc0-41d5-8be5-2bc3db3cc12f" />
+<img width="373" height="683" alt="Songbird Symphony Screenshot" src="https://github.com/user-attachments/assets/bc6ac86e-7493-4d7d-ba3d-8e3d126b1577" />
 
 Songbird Symphony is a web experience that allows you to create your own chorus of bird sounds. Simply click on a bird card to begin playing that bird's video and sound. You can select as many birds as you like. You can stop the video and sound of a bird by tapping the bird card again or waiting for the video to run its course. Additionally, the reset button will allow you to stop all bird videos and sounds.
 
